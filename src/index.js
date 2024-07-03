@@ -2,11 +2,12 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const path = require('path');
 const expenseRoutes = require('./routes/expenseRoutes');
+const sequelize = require('./sequelize'); // Import Sequelize instance
 require('dotenv').config();
-const { Sequelize } = require('sequelize');
 
 // Create Express app
 const app = express();
+console.log("start");
 const PORT = process.env.PORT || 3000;
 
 // Middleware
@@ -19,23 +20,11 @@ app.use(express.static(path.join(__dirname, '../public')));
 // API routes
 app.use('/api', expenseRoutes);
 
-// Initialize Sequelize with DATABASE_URL from environment variables
-const sequelize = new Sequelize(process.env.DATABASE_URL, {
-    dialect: 'postgres',
-    protocol: 'postgres',
-    dialectOptions: {
-        ssl: {
-            require: true,
-            rejectUnauthorized: false
-        }
-    }
-});
-
 // Connect to the database and start the server
 sequelize.authenticate()
     .then(() => {
         console.log('Connection to the database has been established successfully.');
-        return sequelize.sync();
+        return sequelize.sync(); // Sync database models
     })
     .then(() => {
         app.listen(PORT, () => {
@@ -46,7 +35,6 @@ sequelize.authenticate()
         console.error('Unable to connect to the database:', error);
     });
 
-module.exports = sequelize;
 
 
 
