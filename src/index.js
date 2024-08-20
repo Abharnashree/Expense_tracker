@@ -1,8 +1,8 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const path = require('path');
-// const expenseRoutes = require('./routes/expenseRoutes'); // Comment out if routes depend on the database
-// const sequelize = require('./sequelize'); // Import Sequelize instance
+const expenseRoutes = require('./routes/expenseRoutes'); // Comment out if routes depend on the database
+const sequelize = require('./sequelize'); // Import Sequelize instance
 require('dotenv').config();
 
 // Create Express app
