@@ -5,12 +5,15 @@ const expenseRoutes = require('./routes/expenseRoutes'); // Comment out if route
 const sequelize = require('./sequelize'); // Import Sequelize instance
 require('dotenv').config();
 
+
+
 // Create Express app
 const app = express();
 console.log("start");
 const PORT = process.env.PORT || 3000;
 
 // Middleware
+app.use('/api', expenseRoutes);
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -18,7 +21,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, '../public')));
 
 // API routes
-// app.use('/api', expenseRoutes); // Comment out if the routes depend on the database
+ app.use('/api', expenseRoutes); // Comment out if the routes depend on the database
 
 if (process.env.USE_DATABASE === 'true') {
     // Connect to the database and start the server
