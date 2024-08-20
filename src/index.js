@@ -1,8 +1,8 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const path = require('path');
-const expenseRoutes = require('./routes/expenseRoutes');
-const sequelize = require('./sequelize'); // Import Sequelize instance
+// const expenseRoutes = require('./routes/expenseRoutes'); // Comment out if routes depend on the database
+// const sequelize = require('./sequelize'); // Import Sequelize instance
 require('dotenv').config();
 
 // Create Express app
@@ -18,25 +18,26 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, '../public')));
 
 // API routes
-app.use('/api', expenseRoutes);
+// app.use('/api', expenseRoutes); // Comment out if the routes depend on the database
 
-// Connect to the database and start the server
-sequelize.authenticate()
-    .then(() => {
-        console.log('Connection to the database has been established successfully.');
-        return sequelize.sync(); // Sync database models
-    })
-    .then(() => {
-        app.listen(PORT, () => {
-            console.log(`Server is running on port ${PORT}`);
+if (process.env.USE_DATABASE === 'true') {
+    // Connect to the database and start the server
+    sequelize.authenticate()
+        .then(() => {
+            console.log('Connection to the database has been established successfully.');
+            return sequelize.sync(); // Sync database models
+        })
+        .then(() => {
+            app.listen(PORT, () => {
+                console.log(`Server is running on port ${PORT}`);
+            });
+        })
+        .catch(error => {
+            console.error('Unable to connect to the database:', error);
         });
-    })
-    .catch(error => {
-        console.error('Unable to connect to the database:', error);
+} else {
+    // Start the server without connecting to the database
+    app.listen(PORT, () => {
+        console.log(`Server is running on port ${PORT} without database connection`);
     });
-
-
-
-
-
-
+}
